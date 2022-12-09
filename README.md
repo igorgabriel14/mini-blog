@@ -11,11 +11,11 @@ npm install
 Para compilar usando o tsc do projeto:
 
 ```
-npx tsc .\src\index.ts --outDir .\dist\
+npx tsc .\src\main.ts --outDir .\dist\
 ```
 
 Para rodar o arquivo JavaScript usando node:
 
 ```
-node .\dist\index.js
+node .\dist\main.js
 ```
