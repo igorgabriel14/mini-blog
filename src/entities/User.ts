@@ -11,6 +11,12 @@ class User {
   getPassword(): string {
     return this._password;
   }
+  setUsername(username: string) {
+    this._username = username;
+  }
+  setPassword(password: string) {
+    this._password = password;
+  }
 }
 
 export { User };
