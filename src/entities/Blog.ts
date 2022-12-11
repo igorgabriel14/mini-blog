@@ -19,7 +19,10 @@ class Blog {
   }
 
   readUsers(): any {
-    return JSON.parse(this.fs.readFileSync(usersPath, { enconding: "utf-8" }));
+    this.users = JSON.parse(
+      this.fs.readFileSync(usersPath, { enconding: "utf-8" })
+    );
+    return this.users;
   }
 
   writePosts(): void {
@@ -29,36 +32,38 @@ class Blog {
   }
 
   readPosts(): any {
-    return JSON.parse(this.fs.readFileSync(postsPath, { enconding: "utf-8" }));
+    this.posts = JSON.parse(
+      this.fs.readFileSync(postsPath, { enconding: "utf-8" })
+    );
+    return this.posts;
   }
 
   createUser(username: string, password: string): User {
+    this.readUsers();
     const user: User = new User(username, password);
     this.users.push(user);
     this.writeUsers();
     return user;
   }
 
-  loginUser(): void {
-    const username: string = prompt("Enter username: ");
-    const password: string = prompt("Enter password: ");
-    for (let i = 0; i < this.users.length; i++) {
+  loginUser(username: string, password: string): User {
+    for (var i = 0; i < this.users.length; i++) {
       if (
-        this.users[i].getUsername() === username &&
-        this.users[i].getPassword() === password
+        this.users[i].getUsername === username &&
+        this.users[i].getPassword === password
       ) {
-        console.log("Allowed access.");
-        return;
+        const user: User = this.users[i];
+        return user;
       }
     }
-    console.log("Access denied.");
+    return this.users[0];
   }
 
   updateUser(user: User): void {
     const username: string = prompt("Enter username: ");
     const password: string = prompt("Enter username: ");
     for (let i = 0; i < this.users.length; i++) {
-      if (this.users[i].getUsername() === user.getUsername()) {
+      if (this.users[i].getUsername === user.getUsername) {
         this.users[i].setUsername(username);
         this.users[i].setPassword(password);
       }
@@ -67,7 +72,7 @@ class Blog {
 
   deleteUser(user: User): void {
     for (let i = 0; i < this.posts.length; i++) {
-      if (this.users[i].getUsername() === user.getUsername()) {
+      if (this.users[i].getUsername === user.getUsername) {
         this.users.splice(i, 1);
         this.writeUsers();
         console.log("Successfully deleted account.");
@@ -86,7 +91,7 @@ class Blog {
   showPost(user: User): Post[] {
     const userPosts: Post[] = [];
     for (let i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].getOwner() === user.getUsername()) {
+      if (this.posts[i].getOwner() === user.getUsername) {
         userPosts.push(this.posts[i]);
       }
     }

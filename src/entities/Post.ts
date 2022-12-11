@@ -9,7 +9,7 @@ class Post {
     this._id = id;
     this._title = title;
     this._content = content;
-    this._owner = owner.getUsername();
+    this._owner = owner.getUsername;
   }
   getId() {
     return this._id;

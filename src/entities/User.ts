@@ -5,10 +5,10 @@ class User {
     this._username = username;
     this._password = password;
   }
-  getUsername(): string {
+  get getUsername(): string {
     return this._username;
   }
-  getPassword(): string {
+  get getPassword(): string {
     return this._password;
   }
   setUsername(username: string) {
