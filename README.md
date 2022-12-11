@@ -8,14 +8,21 @@ Para instalar as dependências:
 npm install
 ```
 
+É importante deixar criado as pastas db e dist:
+
+```
+mkdir db
+mkdir dist
+```
+
 Para compilar usando o tsc do projeto:
 
 ```
-npx tsc .\src\main.ts --outDir .\dist\
+npx tsc .\src\index.ts --outDir .\dist\
 ```
 
 Para rodar o arquivo JavaScript usando node:
 
 ```
-node .\dist\main.js
+node .\dist\index.js
 ```
