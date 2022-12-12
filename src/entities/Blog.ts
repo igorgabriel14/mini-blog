@@ -1,5 +1,9 @@
 import { User } from "./User";
 import { Post } from "./Post";
+import { UsernameTypingError } from "./errors/UsernameTypingError";
+import { PasswordTypingError } from "./errors/PasswrodTypingError";
+import { InvalidCredentialsError } from "./errors/InvalidCredentialsError";
+
 import promptSync = require("prompt-sync");
 
 const usersPath: string = "./db/users.json";
@@ -7,7 +11,7 @@ const postsPath: string = "./db/posts.json";
 
 const prompt: promptSync.Prompt = promptSync();
 
-class Blog {
+export class Blog {
   public users: User[] = [];
   public posts: Post[] = [];
   public fs: any = require("fs");
@@ -38,8 +42,27 @@ class Blog {
     return this.posts;
   }
 
+  checkUsername(username: string): void {
+    this.readUsers();
+    for (let i = 0; i < this.users.length; i++) {
+      if (username === "" || username === this.users[i].username) {
+        throw new UsernameTypingError("Username is null or already exists.");
+      }
+    }
+  }
+
+  checkPassword(password: string): void {
+    for (let i = 0; i < this.users.length; i++) {
+      if (password === "") {
+        throw new PasswordTypingError("Password can't be null.");
+      }
+    }
+  }
+
   createUser(username: string, password: string): User {
     this.readUsers();
+    this.checkUsername(username);
+    this.checkPassword(password);
     const user: User = new User(username, password);
     this.users.push(user);
     this.writeUsers();
@@ -47,51 +70,73 @@ class Blog {
   }
 
   loginUser(username: string, password: string): User {
+    this.readUsers();
     for (var i = 0; i < this.users.length; i++) {
       if (
-        this.users[i].getUsername === username &&
-        this.users[i].getPassword === password
+        this.users[i].username === username &&
+        this.users[i].password === password
       ) {
         const user: User = this.users[i];
         return user;
       }
     }
-    return this.users[0];
+    throw new InvalidCredentialsError(
+      "You typed your credentials incorrectly."
+    );
   }
 
   updateUser(user: User): void {
+    this.readUsers();
+    const oldUsername: string = user.username;
     const username: string = prompt("Enter username: ");
     const password: string = prompt("Enter username: ");
+    this.checkUsername(username);
+    this.checkPassword(password);
     for (let i = 0; i < this.users.length; i++) {
-      if (this.users[i].getUsername === user.getUsername) {
-        this.users[i].setUsername(username);
-        this.users[i].setPassword(password);
+      if (this.users[i].username === user.username) {
+        this.users[i].username = username;
+        this.users[i].password = password;
+        this.writeUsers();
+        this.readPosts();
+        for (let i = 0; i < this.posts.length; i++) {
+          if (this.posts[i].owner === oldUsername) {
+            this.posts[i].owner = username;
+            this.writePosts();
+            break;
+          }
+        }
       }
     }
   }
 
   deleteUser(user: User): void {
-    for (let i = 0; i < this.posts.length; i++) {
-      if (this.users[i].getUsername === user.getUsername) {
+    this.readUsers();
+    for (let i = 0; i < this.users.length; i++) {
+      if (this.users[i].username === user.username) {
         this.users.splice(i, 1);
         this.writeUsers();
-        console.log("Successfully deleted account.");
       }
     }
   }
 
   createPost(title: string, content: string, owner: User): Post {
-    const id: number = Date.now() * Math.random();
-    const post: Post = new Post(Math.floor(id), title, content, owner);
+    this.readPosts();
+    const post: Post = new Post(
+      Math.floor(Math.random() * 100),
+      title,
+      content,
+      owner
+    );
     this.posts.push(post);
     this.writePosts();
     return post;
   }
 
   showPost(user: User): Post[] {
+    this.readPosts();
     const userPosts: Post[] = [];
     for (let i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].getOwner() === user.getUsername) {
+      if (this.posts[i].owner === user.username) {
         userPosts.push(this.posts[i]);
       }
     }
@@ -99,23 +144,23 @@ class Blog {
   }
 
   updatePost(id: number, title: string, content: string): void {
+    this.readPosts();
     for (let i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].getId() === id) {
-        this.posts[i].setTitle(title);
-        this.posts[i].setContent(content);
+      if (this.posts[i].id === id) {
+        this.posts[i].title = title;
+        this.posts[i].content = content;
+        this.writePosts();
       }
     }
   }
 
-  deletePost(post: Post): void {
+  deletePost(id: number): void {
+    this.readPosts();
     for (let i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].getId() === post.getId()) {
+      if (this.posts[i].id === id) {
         this.posts.splice(i, 1);
         this.writePosts();
-        console.log("Successfully deleted post");
       }
     }
   }
 }
-
-export { Blog };
