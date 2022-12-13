@@ -1,8 +1,9 @@
 import { User } from "./User";
 import { Post } from "./Post";
 import { UsernameTypingError } from "./errors/UsernameTypingError";
-import { PasswordTypingError } from "./errors/PasswrodTypingError";
+import { PasswordTypingError } from "./errors/PasswordTypingError";
 import { InvalidCredentialsError } from "./errors/InvalidCredentialsError";
+import { InvalidID } from "./errors/InvalidID";
 
 import promptSync = require("prompt-sync");
 
@@ -45,24 +46,24 @@ export class Blog {
   checkUsername(username: string): void {
     this.readUsers();
     for (let i = 0; i < this.users.length; i++) {
-      if (username === "" || username === this.users[i].username) {
-        throw new UsernameTypingError("Username is null or already exists.");
+      if (
+        username === "" ||
+        username == this.users[i].username ||
+        typeof username != "string"
+      ) {
+        throw new UsernameTypingError("Username is empty or already exists.");
       }
     }
   }
 
   checkPassword(password: string): void {
-    for (let i = 0; i < this.users.length; i++) {
-      if (password === "") {
-        throw new PasswordTypingError("Password can't be null.");
-      }
+    if (password === "" || typeof password != "string") {
+      throw new PasswordTypingError("Password can't be empty.");
     }
   }
 
   createUser(username: string, password: string): User {
     this.readUsers();
-    this.checkUsername(username);
-    this.checkPassword(password);
     const user: User = new User(username, password);
     this.users.push(user);
     this.writeUsers();
@@ -89,8 +90,8 @@ export class Blog {
     this.readUsers();
     const oldUsername: string = user.username;
     const username: string = prompt("Enter username: ");
-    const password: string = prompt("Enter username: ");
     this.checkUsername(username);
+    const password: string = prompt("Enter password: ");
     this.checkPassword(password);
     for (let i = 0; i < this.users.length; i++) {
       if (this.users[i].username === user.username) {
@@ -143,24 +144,29 @@ export class Blog {
     return userPosts;
   }
 
-  updatePost(id: number, title: string, content: string): void {
+  updatePost(id: number, title: string, content: string): Post {
     this.readPosts();
     for (let i = 0; i < this.posts.length; i++) {
       if (this.posts[i].id === id) {
         this.posts[i].title = title;
         this.posts[i].content = content;
         this.writePosts();
+        return this.posts[i];
       }
     }
+    throw new InvalidID("Incorrect ID! Type again.");
   }
 
-  deletePost(id: number): void {
+  deletePost(id: number): Post {
     this.readPosts();
     for (let i = 0; i < this.posts.length; i++) {
       if (this.posts[i].id === id) {
+        let oldPost : Post = this.posts[i];
         this.posts.splice(i, 1);
         this.writePosts();
+        return oldPost;
       }
     }
+    throw new InvalidID("Incorrect ID! Type again.");
   }
 }
