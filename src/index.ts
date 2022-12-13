@@ -1,8 +1,4 @@
 import { Blog } from "./entities/Blog";
-import { UsernameTypingError } from "./entities/errors/UsernameTypingError";
-import { PasswordTypingError } from "./entities/errors/PasswordTypingError";
-import { InvalidCredentialsError } from "./entities/errors/InvalidCredentialsError";
-import { InvalidID } from "./entities/errors/InvalidID";
 
 import promptSync = require("prompt-sync");
 
@@ -47,7 +43,7 @@ try {
           console.log("0 - Exit");
 
           let user = blog.loginUser(usernameLogin, passwordLogin);
-          optionLogin = Number(prompt("Actions: "));
+          optionLogin = Number(prompt("Enter a action: "));
 
           switch (optionLogin) {
             case 1:
@@ -103,16 +99,5 @@ try {
     }
   } while (option !== 0);
 } catch (error: any) {
-  if (error instanceof UsernameTypingError) {
-    console.log(error.message);
-  }
-  if (error instanceof PasswordTypingError) {
-    console.log(error.message);
-  }
-  if (error instanceof InvalidCredentialsError) {
-    console.log(error.message);
-  }
-  if (error instanceof InvalidID) {
-    console.log(error.message);
-  }
+  console.log(error.message);
 }
