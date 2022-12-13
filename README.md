@@ -15,10 +15,10 @@ mkdir db
 mkdir dist
 ```
 
-Para compilar usando o tsc:
+Para compilar usando o tsc do projeto:
 
 ```
-tsc .\src\index.ts --outDir .\dist\
+npx tsc .\src\index.ts --outDir .\dist\
 ```
 
 Para rodar o arquivo JavaScript usando node:
