@@ -1,6 +1,6 @@
 # Mini-blog
 
-Projeto de um mini-blog usando TypeScript e o módulo File System, referente ao trabalho da disciplina de Orientação a Objetos do IFPI.
+Projeto de um mini-blog usando TypeScript e o módulo File System, referente ao trabalho final da disciplina de Programação Orientada a Objetos do curso de Análise e Desenvolvimentos de Sistemas do IFPI.
 
 Para instalar as dependências:
 
@@ -8,17 +8,17 @@ Para instalar as dependências:
 npm install
 ```
 
-É importante deixar criado as pastas db e dist:
+É importante criar as pastas db e dist para a compilação ocorrer corretamente:
 
 ```
 mkdir db
 mkdir dist
 ```
 
-Para compilar usando o tsc do projeto:
+Para compilar usando o tsc:
 
 ```
-npx tsc .\src\index.ts --outDir .\dist\
+tsc .\src\index.ts --outDir .\dist\
 ```
 
 Para rodar o arquivo JavaScript usando node:
